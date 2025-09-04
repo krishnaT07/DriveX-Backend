@@ -4,6 +4,7 @@ const { initializeSocket } = require('./socket');
 const port = process.env.PORT || 3000;
 
 const server = http.createServer(app);
+console.log('Current directory:', process.cwd());
 
 // Initialize socket.io with the server
 initializeSocket(server);
