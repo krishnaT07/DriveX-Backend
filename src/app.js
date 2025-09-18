@@ -18,7 +18,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      'https://drive-x-frontend-bpt22rcpt-krishnas-projects-64464138.vercel.app',
+      'https://drive-x-frontend.vercel.app',
       'http://localhost:5173',           // keep for local dev
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],

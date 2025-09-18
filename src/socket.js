@@ -8,7 +8,7 @@ function initializeSocket(server) {
   io = new Server(server, {
     cors: {
       origin: [
-        'https://drive-x-frontend-bpt22rcpt-krishnas-projects-64464138.vercel.app',
+        'https://drive-x-frontend.vercel.app',
         'http://localhost:5173',
       ],
       methods: ['GET', 'POST'],
