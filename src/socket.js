@@ -8,8 +8,8 @@ function initializeSocket(server) {
   io = new Server(server, {
     cors: {
       origin: [
-        'https://drive-x-frontend.vercel.app',
-        'http://localhost:5173',
+        'https://drive-x-frontend.vercel.app', // Production frontend
+        'http://localhost:5173',              // Local dev frontend
       ],
       methods: ['GET', 'POST'],
       credentials: true,
@@ -19,6 +19,7 @@ function initializeSocket(server) {
   io.on('connection', (socket) => {
     console.log(`Client connected: ${socket.id}`);
 
+    // Join room
     socket.on('join', async ({ userId, userType }) => {
       try {
         if (userType === 'user') {
@@ -26,12 +27,14 @@ function initializeSocket(server) {
         } else if (userType === 'captain') {
           await captainModel.findByIdAndUpdate(userId, { socketId: socket.id });
         }
+        socket.emit('joined', { message: 'Successfully joined room' });
       } catch (err) {
         console.error('Join error:', err);
         socket.emit('error', { message: 'Failed to join room' });
       }
     });
 
+    // Update captain location
     socket.on('update-location-captain', async ({ userId, location }) => {
       if (!location || typeof location.lat !== 'number' || typeof location.lng !== 'number') {
         return socket.emit('error', { message: 'Invalid location data' });
@@ -49,9 +52,9 @@ function initializeSocket(server) {
       }
     });
 
+    // Handle disconnect
     socket.on('disconnect', async () => {
       console.log(`Client disconnected: ${socket.id}`);
-      // Optionally remove socketId from users/captains
       try {
         await userModel.updateMany({ socketId: socket.id }, { $unset: { socketId: 1 } });
         await captainModel.updateMany({ socketId: socket.id }, { $unset: { socketId: 1 } });
@@ -62,10 +65,10 @@ function initializeSocket(server) {
   });
 }
 
+// Helper to send messages to a specific socketId
 function sendMessageToSocketId(socketId, { event, data }) {
   if (!io) return console.warn('Socket.io not initialized');
   if (!socketId || !event) return console.warn('Missing socketId or event');
-
   io.to(socketId).emit(event, data);
 }
 
