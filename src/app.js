@@ -27,7 +27,7 @@ app.use(
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
-    optionsSuccessStatus: 200, // for legacy browsers
+    optionsSuccessStatus: 200,
   })
 );
 
