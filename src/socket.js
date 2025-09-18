@@ -49,8 +49,15 @@ function initializeSocket(server) {
       }
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
       console.log(`Client disconnected: ${socket.id}`);
+      // Optionally remove socketId from users/captains
+      try {
+        await userModel.updateMany({ socketId: socket.id }, { $unset: { socketId: 1 } });
+        await captainModel.updateMany({ socketId: socket.id }, { $unset: { socketId: 1 } });
+      } catch (err) {
+        console.error('Error clearing socketId on disconnect:', err);
+      }
     });
   });
 }
